@@ -33,7 +33,7 @@ public class Worker : BackgroundService
         catch (Exception ex)
         {
             _logger.LogError(ex, "{Message}", ex.Message);
-            var logDir = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\ODR-Scca";
+            var logDir = $@"C:\ServiceLog\ODR-Scca";
             if (!Directory.Exists(logDir))
                 Directory.CreateDirectory(logDir);
             File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
