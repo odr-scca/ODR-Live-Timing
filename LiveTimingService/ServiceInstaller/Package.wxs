@@ -56,14 +56,6 @@
                         DisplayName="$(Name)"
                         Start="auto"
                         ErrorControl="normal" />
-
-        <!-- Tell WiX to start the Service -->
-        <ServiceControl Id="StartService"
-                        Start="install"
-                        Stop="both"
-                        Remove="uninstall"
-                        Name="ODR.LiveTiming.UploadService"
-                        Wait="true" />
       </Component>
     </DirectoryRef>
 
