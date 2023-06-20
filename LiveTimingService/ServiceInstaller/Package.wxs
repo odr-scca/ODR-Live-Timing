@@ -15,7 +15,8 @@
 
     <!-- Allow upgrades and prevent downgrades -->
     <MajorUpgrade DowngradeErrorMessage="A later version of ODR Live Timing is already installed. Setup will now exit." />
-
+    <Feature Id="Package">
+    </Feature>
     <!-- Define the directory structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
@@ -34,11 +35,8 @@
     <DirectoryRef Id="INSTALLFOLDER">
 
       <!-- Create a single component which is the ODR.LiveTiming.UploadService.exe file -->
-      <Component Id="ServiceExecutable" Bitness="always64">
+      <Component Id="ServiceExecutable" Bitness="always64" Feature="Package">
 
-        <File Id="appsettings.json"
-              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\appsettings.json"
-              KeyPath="false" />
 
         <!-- Copies the ODR.LiveTiming.UploadService.exe file using the
                      project reference preprocessor variables -->
@@ -56,6 +54,12 @@
                         DisplayName="$(Name)"
                         Start="auto"
                         ErrorControl="normal" />
+      </Component>
+      <Component Id="ConfigurationFile" Bitness="always64" NeverOverwrite="yes" Feature="Package">
+        <File Id="appsettings.json"
+              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\appsettings.json"
+              KeyPath="true"
+              />
       </Component>
     </DirectoryRef>
 
