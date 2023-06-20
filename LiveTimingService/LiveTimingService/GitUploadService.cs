@@ -28,21 +28,23 @@ public sealed class GitUploadService
                 Commands.Stage(repo, Options.DestinationFolderPath);
                 Signature committer = signature;
 
-                // Replace "Commit message" with your desired commit message
                 try
                 {
                     repo.Commit(Options.CommitMessage, signature, committer);
                 }
                 catch (Exception ex)
                 {
-                    File.AppendAllText("log.txt", DateTime.Now + ex.Message  + ex.StackTrace + Environment.NewLine);
+                    var logDir = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\ODR-Scca";
+                    if (!Directory.Exists(logDir))
+                        Directory.CreateDirectory(logDir);
+                    File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
                 }
                 var pushOptions = new PushOptions();
                 pushOptions.CredentialsProvider = credentialsProvider;
                 repo.Network.Push(repo.Head, pushOptions);
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

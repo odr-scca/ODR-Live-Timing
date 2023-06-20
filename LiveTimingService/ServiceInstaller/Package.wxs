@@ -3,7 +3,7 @@
 <!-- Define the variables in "$(var.*) expressions" -->
 <?define Name = "ODR Live Timing Service" ?>
 <?define Manufacturer = "Tristan Pressley" ?>
-<?define Version = "1.0.2.0" ?>
+<?define Version = "1.0.3.0" ?>
 <?define UpgradeCode = "9ED3FF33-8718-444E-B44B-69A2344B7E98" ?>
 
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
@@ -15,8 +15,7 @@
 
     <!-- Allow upgrades and prevent downgrades -->
     <MajorUpgrade DowngradeErrorMessage="A later version of ODR Live Timing is already installed. Setup will now exit." />
-    <Feature Id="Package">
-    </Feature>
+
     <!-- Define the directory structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
@@ -35,14 +34,22 @@
     <DirectoryRef Id="INSTALLFOLDER">
 
       <!-- Create a single component which is the ODR.LiveTiming.UploadService.exe file -->
-      <Component Id="ServiceExecutable" Bitness="always64" Feature="Package">
+      <Component Id="ServiceExecutable" Bitness="always64" Guid ="0ebee614-7acb-441e-88e6-54282872ee9a">
 
+        <File Id="appsettings.json"
+              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\appsettings.json"
+              KeyPath="false" />
 
+        <File Id="git2e632535.dll"
+              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\git2-e632535.dll"
+              KeyPath="false" />
+        
         <!-- Copies the ODR.LiveTiming.UploadService.exe file using the
                      project reference preprocessor variables -->
         <File Id="ODR.LiveTiming.UploadService.exe"
               Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\ODR.LiveTiming.UploadService.exe"
               KeyPath="true" />
+
 
         <!-- Remove all files from the INSTALLFOLDER on uninstall -->
         <RemoveFile Id="ALLFILES" Name="*.*" On="both" />
@@ -54,12 +61,6 @@
                         DisplayName="$(Name)"
                         Start="auto"
                         ErrorControl="normal" />
-      </Component>
-      <Component Id="ConfigurationFile" Bitness="always64" NeverOverwrite="yes" Feature="Package">
-        <File Id="appsettings.json"
-              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\appsettings.json"
-              KeyPath="true"
-              />
       </Component>
     </DirectoryRef>
 
