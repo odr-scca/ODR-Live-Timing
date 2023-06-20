@@ -34,10 +34,13 @@ public sealed class GitUploadService
                 }
                 catch (Exception ex)
                 {
-                    var logDir = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\ODR-Scca";
-                    if (!Directory.Exists(logDir))
-                        Directory.CreateDirectory(logDir);
-                    File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
+                    if (ex.GetType() != typeof(EmptyCommitException))
+                    {
+                        var logDir = $@"C:\ServiceLog\ODR-Scca";
+                        if (!Directory.Exists(logDir))
+                            Directory.CreateDirectory(logDir);
+                        File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
+                    }
                 }
                 var pushOptions = new PushOptions();
                 pushOptions.CredentialsProvider = credentialsProvider;
