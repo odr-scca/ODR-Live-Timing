@@ -37,6 +37,7 @@ public sealed class GitUploadService
                 }
                 catch (Exception ex)
                 {
+                    System.Threading.Thread.Sleep(30000); // Wait for 30 seconds before retrying
                     if (ex.GetType() != typeof(EmptyCommitException))
                     {
                         // Logging disabled here for now - the only error that should happen here is 
