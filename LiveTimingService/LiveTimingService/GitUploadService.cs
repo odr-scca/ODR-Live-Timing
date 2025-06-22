@@ -18,33 +18,37 @@ public sealed class GitUploadService
             // Commit the file to the Git repository
             using (var repo = new Repository(Options.RepositoryPath))
             {
-                CredentialsHandler credentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = Options.Username, Password = Options.PersonalAccessToken };
-                
-                var fetchOptions = new FetchOptions { CredentialsProvider = credentialsProvider, };
-                var mergeOptions = new MergeOptions { FailOnConflict = true, IgnoreWhitespaceChange = true };
-                var pullOptions = new PullOptions() { FetchOptions = fetchOptions, MergeOptions = mergeOptions };
-                Signature signature = new Signature(Options.AuthorName, Options.AuthorEmail, DateTime.Now);
-                Commands.Pull(repo, signature, pullOptions);
-                Commands.Stage(repo, Options.DestinationFolderPath);
-                Signature committer = signature;
 
                 try
                 {
+                    CredentialsHandler credentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = Options.Username, Password = Options.PersonalAccessToken };
+
+                    var fetchOptions = new FetchOptions { CredentialsProvider = credentialsProvider, };
+                    var mergeOptions = new MergeOptions { FailOnConflict = true, IgnoreWhitespaceChange = true };
+                    var pullOptions = new PullOptions() { FetchOptions = fetchOptions, MergeOptions = mergeOptions };
+                    Signature signature = new Signature(Options.AuthorName, Options.AuthorEmail, DateTime.Now);
+                    Commands.Pull(repo, signature, pullOptions);
+                    Commands.Stage(repo, Options.DestinationFolderPath);
+                    Signature committer = signature;
                     repo.Commit(Options.CommitMessage, signature, committer);
+                    var pushOptions = new PushOptions();
+                    pushOptions.CredentialsProvider = credentialsProvider;
+                    repo.Network.Push(repo.Head, pushOptions);
                 }
                 catch (Exception ex)
                 {
+                    System.Threading.Thread.Sleep(30000); // Wait for 30 seconds before retrying
                     if (ex.GetType() != typeof(EmptyCommitException))
                     {
-                        var logDir = $@"C:\ServiceLog\ODR-Scca";
-                        if (!Directory.Exists(logDir))
-                            Directory.CreateDirectory(logDir);
-                        File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
+                        // Logging disabled here for now - the only error that should happen here is 
+                        // when there is no network connection - which we don't need to log
+
+                        //var logDir = $@"C:\ServiceLog\ODR-Scca";
+                        //if (!Directory.Exists(logDir))
+                        //    Directory.CreateDirectory(logDir);
+                        //File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
                     }
                 }
-                var pushOptions = new PushOptions();
-                pushOptions.CredentialsProvider = credentialsProvider;
-                repo.Network.Push(repo.Head, pushOptions);
             }
         }
         catch (Exception)
