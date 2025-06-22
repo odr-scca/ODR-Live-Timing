@@ -39,10 +39,13 @@ public sealed class GitUploadService
                 {
                     if (ex.GetType() != typeof(EmptyCommitException))
                     {
-                        var logDir = $@"C:\ServiceLog\ODR-Scca";
-                        if (!Directory.Exists(logDir))
-                            Directory.CreateDirectory(logDir);
-                        File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
+                        // Logging disabled here for now - the only error that should happen here is 
+                        // when there is no network connection - which we don't need to log
+
+                        //var logDir = $@"C:\ServiceLog\ODR-Scca";
+                        //if (!Directory.Exists(logDir))
+                        //    Directory.CreateDirectory(logDir);
+                        //File.AppendAllText($@"{logDir}\log.txt", $"{DateTime.Now}: {ex.Message} {ex.StackTrace}{Environment.NewLine}");
                     }
                 }
             }
