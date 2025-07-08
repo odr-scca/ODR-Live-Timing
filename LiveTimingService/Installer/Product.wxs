@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Define the variables in "$(var.*) expressions" -->
+<?define var.Name = "ODR Live Timing Service" ?>
+<?define var.Manufacturer = "Tristan Pressley" ?>
+<?define var.Version = "1.0.4.0" ?>
+<?define var.UpgradeCode = "9ED3FF33-8718-444E-B44B-69A2344B7E98" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Package Name="$(var.Name)"
+           Manufacturer="$(var.Manufacturer)"
+           Version="$(var.Version)"
+           UpgradeCode="$(var.UpgradeCode)"
+           Compressed="true">
+
+    <!-- Allow upgrades and prevent downgrades -->
+    <MajorUpgrade DowngradeErrorMessage="A later version of ODR Live Timing is already installed. Setup will now exit." />
+
+    <!-- Define the directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+
+        <!-- Create a folder inside program files -->
+        <Directory Id="ROOTDIRECTORY" Name="$(var.Manufacturer)">
+
+          <!-- Create a folder within the parent folder given the name -->
+          <Directory Id="INSTALLFOLDER" Name="$(var.Name)" />
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <!-- The files inside this DirectoryRef are linked to
+             the ODR.LiveTiming.UploadService directory via INSTALLFOLDER -->
+    <DirectoryRef Id="INSTALLFOLDER">
+
+      <!-- Create a single component which is the ODR.LiveTiming.UploadService.exe file -->
+      <Component Id="ServiceExecutable" Bitness="always64" Guid ="0ebee614-7acb-441e-88e6-54282872ee9a">
+
+        <File Id="appsettings.json"
+              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\appsettings.json"
+              KeyPath="false" />
+
+        <File Id="git2e632535.dll"
+              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\git2-e632535.dll"
+              KeyPath="false" />
+
+        <!-- Copies the ODR.LiveTiming.UploadService.exe file using the
+                     project reference preprocessor variables -->
+        <File Id="ODR.LiveTiming.UploadService.exe"
+              Source="$(var.ODR.LiveTiming.UploadService.TargetDir)publish\ODR.LiveTiming.UploadService.exe"
+              KeyPath="true" />
+
+
+        <!-- Remove all files from the INSTALLFOLDER on uninstall -->
+        <RemoveFile Id="ALLFILES" Name="*.*" On="both" />
+
+        <!-- Tell WiX to install the Service -->
+        <ServiceInstall Id="ServiceInstaller"
+                        Type="ownProcess"
+                        Name="ODR.LiveTiming.UploadService"
+                        DisplayName="$(var.Name)"
+                        Start="auto"
+                        ErrorControl="normal" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- Tell WiX to install the files -->
+    <Feature Id="Service" Title="ODR.LiveTiming.UploadService Setup" Level="1">
+      <ComponentRef Id="ServiceExecutable" />
+    </Feature>
+
+  </Package>
+</Wix>
