@@ -5,8 +5,9 @@
 This repository hosts the website for the ODR live timing site. Every time a new commit is pushed, the /public/ site will redeploy via github actions to the live firebase site: livetiming.html is the file which contains timing info. Live Timing is typically updated within 30 seconds of a recorded time.
 
 Participants should use these links to ODR-SCCA's Live Timing:
-[Firebase link to the latest ODR-SCCA livetiming.html](https://odr-timing.web.app/livetiming.html)
-[Github Pages link to the latest ODR-SCCA livetiming.html](https://odr-scca.github.io/ODR-Live-Timing/Website/public/livetiming.html)
+
+Preferred: [Firebase link to the latest ODR-SCCA livetiming.html](https://odr-timing.web.app/livetiming.html)
+Backup: [Github Pages link to the latest ODR-SCCA livetiming.html](https://odr-scca.github.io/ODR-Live-Timing/Website/public/livetiming.html)
 
 
 ### Worker Service
